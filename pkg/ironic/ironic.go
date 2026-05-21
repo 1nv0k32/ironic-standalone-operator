@@ -211,12 +211,12 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 		if ingressSettings.IngressClassName != "" {
 			ingress.Spec.IngressClassName = &ingressSettings.IngressClassName
 		}
-		ingress.Spec.TLS = append(ingress.Spec.TLS, networkingv1.IngressTLS{
+		ingress.Spec.TLS = []networkingv1.IngressTLS{{
 			Hosts:      []string{ingressSettings.Host},
 			SecretName: ironic.Name + "-ingress-tls",
-		})
+		}}
 
-		ingress.Spec.Rules = append(ingress.Spec.Rules, networkingv1.IngressRule{
+		ingress.Spec.Rules = []networkingv1.IngressRule{{
 			Host: ingressSettings.Host,
 			IngressRuleValue: networkingv1.IngressRuleValue{
 				HTTP: &networkingv1.HTTPIngressRuleValue{
@@ -226,7 +226,7 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 							PathType: ptr.To(networkingv1.PathTypeImplementationSpecific),
 							Backend: networkingv1.IngressBackend{
 								Service: &networkingv1.IngressServiceBackend{
-									Name: ironicPortName,
+									Name: ironic.Name,
 									Port: networkingv1.ServiceBackendPort{
 										Number: defaultExposedPort,
 									},
@@ -234,11 +234,23 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 							},
 						},
 						{
-							Path:     "/(redfish|images)",
+							Path:     "/redfish",
 							PathType: ptr.To(networkingv1.PathTypeImplementationSpecific),
 							Backend: networkingv1.IngressBackend{
 								Service: &networkingv1.IngressServiceBackend{
-									Name: imagesPortName,
+									Name: ironic.Name,
+									Port: networkingv1.ServiceBackendPort{
+										Number: defaultImageExposedPort,
+									},
+								},
+							},
+						},
+						{
+							Path:     "/images",
+							PathType: ptr.To(networkingv1.PathTypeImplementationSpecific),
+							Backend: networkingv1.IngressBackend{
+								Service: &networkingv1.IngressServiceBackend{
+									Name: ironic.Name,
 									Port: networkingv1.ServiceBackendPort{
 										Number: defaultImageExposedPort,
 									},
@@ -248,7 +260,7 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 					},
 				},
 			},
-		})
+		}}
 
 		return controllerutil.SetControllerReference(ironic, ingress, cctx.Scheme)
 	})

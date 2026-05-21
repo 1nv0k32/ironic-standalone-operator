@@ -391,8 +391,8 @@ func buildIronicEnvVars(cctx ControllerContext, resources Resources) []corev1.En
 
 	if resources.Ironic.Spec.Networking.Ingress != nil {
 		ingressHost := resources.Ironic.Spec.Networking.Ingress.Host
-		result = appendStringEnv(result, "IRONIC_EXTERNAL_CALLBACK_URL", ingressHost)
-		result = appendStringEnv(result, "IRONIC_EXTERNAL_HTTP_URL", ingressHost)
+		result = appendStringEnv(result, "IRONIC_EXTERNAL_CALLBACK_URL", "https://"+ingressHost)
+		result = appendStringEnv(result, "IRONIC_EXTERNAL_HTTP_URL", "https://"+ingressHost)
 	}
 
 	// Add sensor data environment variables when PrometheusExporter is enabled
