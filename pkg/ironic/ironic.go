@@ -19,6 +19,7 @@ const (
 	defaultExposedPort      = 80
 	httpsExposedPort        = 443
 	defaultImageExposedPort = 8080
+	httpsImageExposedPort   = 8443
 )
 
 func ironicDeploymentName(ironic *metal3api.Ironic) string {
@@ -129,10 +130,16 @@ func ensureIronicService(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 	service := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{Name: ironic.Name, Namespace: ironic.Namespace},
 	}
+
+	imagesPortNameSvc := imagesPortName
 	exposedPort := int32(defaultExposedPort)
+	imagesExposedPort := int32(defaultImageExposedPort)
 	if ironic.Spec.TLS.CertificateName != "" {
+		imagesPortNameSvc = imagesTLSPortName
 		exposedPort = httpsExposedPort
+		imagesExposedPort = httpsImageExposedPort
 	}
+
 	result, err := controllerutil.CreateOrUpdate(cctx.Context, cctx.Client, service, func() error {
 		if service.Labels == nil {
 			cctx.Logger.Info("creating a new ironic service")
@@ -154,10 +161,10 @@ func ensureIronicService(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 			ports = append(
 				ports,
 				corev1.ServicePort{
-					Name:       imagesPortName,
+					Name:       imagesPortNameSvc,
 					Protocol:   corev1.ProtocolTCP,
-					Port:       defaultImageExposedPort,
-					TargetPort: intstr.FromString(imagesPortName),
+					Port:       imagesExposedPort,
+					TargetPort: intstr.FromString(imagesPortNameSvc),
 				},
 			)
 		}
@@ -216,6 +223,11 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 			SecretName: ironic.Name + "-ingress-tls",
 		}}
 
+		imagesPortNameIngress := imagesPortName
+		if ironic.Spec.TLS.CertificateName != "" {
+			imagesPortNameIngress = imagesTLSPortName
+		}
+
 		ingress.Spec.Rules = []networkingv1.IngressRule{{
 			Host: ingressSettings.Host,
 			IngressRuleValue: networkingv1.IngressRuleValue{
@@ -228,7 +240,7 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 								Service: &networkingv1.IngressServiceBackend{
 									Name: ironic.Name,
 									Port: networkingv1.ServiceBackendPort{
-										Number: defaultExposedPort,
+										Name: ironicPortName,
 									},
 								},
 							},
@@ -240,7 +252,7 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 								Service: &networkingv1.IngressServiceBackend{
 									Name: ironic.Name,
 									Port: networkingv1.ServiceBackendPort{
-										Number: defaultImageExposedPort,
+										Name: imagesPortNameIngress,
 									},
 								},
 							},
@@ -252,7 +264,7 @@ func ensureIronicIngress(cctx ControllerContext, ironic *metal3api.Ironic) (Stat
 								Service: &networkingv1.IngressServiceBackend{
 									Name: ironic.Name,
 									Port: networkingv1.ServiceBackendPort{
-										Number: defaultImageExposedPort,
+										Name: imagesPortNameIngress,
 									},
 								},
 							},
