@@ -5,124 +5,124 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - configmaps
+  - configmaps
   verbs:
-    - get
-    - list
-    - update
-    - watch
+  - get
+  - list
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - events
+  - events
   verbs:
-    - create
-    - patch
+  - create
+  - patch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - pods
+  - pods
   verbs:
-    - get
-    - list
-    - watch
+  - get
+  - list
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - secrets
+  - secrets
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - services
+  - services
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - "networking.k8s.io"
+  - "networking.k8s.io"
   resources:
-    - ingresses
+  - ingresses
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - apps
+  - apps
   resources:
-    - daemonsets
-    - deployments
+  - daemonsets
+  - deployments
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - batch
+  - batch
   resources:
-    - jobs
+  - jobs
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - ironic.metal3.io
+  - ironic.metal3.io
   resources:
-    - ironics
+  - ironics
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - ironic.metal3.io
+  - ironic.metal3.io
   resources:
-    - ironics/finalizers
+  - ironics/finalizers
   verbs:
-    - update
+  - update
 - apiGroups:
-    - ironic.metal3.io
+  - ironic.metal3.io
   resources:
-    - ironics/status
+  - ironics/status
   verbs:
-    - get
-    - patch
-    - update
+  - get
+  - patch
+  - update
 - apiGroups:
-    - monitoring.coreos.com
+  - monitoring.coreos.com
   resources:
-    - servicemonitors
+  - servicemonitors
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
